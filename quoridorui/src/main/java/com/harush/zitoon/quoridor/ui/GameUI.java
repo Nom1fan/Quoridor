@@ -20,7 +20,7 @@ public class GameUI {
     }
 
     public void movePawnOnScreen(int x, int y) {
-        LogicResult logicResult = board.setAtLocation(pawn, x, y);
+        LogicResult logicResult = board.setPawn(pawn, x, y);
 
         if (!logicResult.isSuccess()) {
             log.info(logicResult.getErrMsg());

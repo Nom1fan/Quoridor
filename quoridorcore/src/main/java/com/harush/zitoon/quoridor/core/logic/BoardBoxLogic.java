@@ -2,20 +2,20 @@ package com.harush.zitoon.quoridor.core.logic;
 
 public class BoardBoxLogic implements BoardBox {
 
-    private BoardPiece boardPiece;
+    private Pawn pawn;
 
     @Override
     public boolean isOccupied() {
-        return boardPiece != null;
+        return pawn != null;
     }
 
     @Override
-    public BoardPiece getBoardPiece() {
-        return boardPiece;
+    public Pawn getPawn() {
+        return pawn;
     }
 
     @Override
-    public void setBoardPiece(BoardPiece boardPiece) {
-        this.boardPiece = boardPiece;
+    public void setPawn(Pawn boardPiece) {
+        this.pawn = boardPiece;
     }
 }

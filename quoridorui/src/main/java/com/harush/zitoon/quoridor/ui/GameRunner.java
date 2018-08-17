@@ -7,7 +7,7 @@ public class GameRunner {
 
     public static void main(String[] args) {
         BoardBoxLogic[][] boardBoxes = new BoardBoxLogic[9][9];
-        Board board = new BoardLogic(boardBoxes);
+        Board board = new BoardLogic(boardBoxes, boardBorders);
 
         GameUI gameUI = new GameUI(board, new PawnLogic());
         gameUI.movePawnOnScreen(-1, -1);

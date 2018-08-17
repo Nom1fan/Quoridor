@@ -1,11 +1,11 @@
 package com.harush.zitoon.quoridor.core.logic;
 
-public interface BoardBox {
+public interface BoardBorder {
 
     boolean isOccupied();
 
-    Pawn getPawn();
+    Wall getWall();
 
-    void setPawn(Pawn pawn);
+    void setWall(Wall wall);
 
 }

@@ -1,97 +1,103 @@
 package com.harush.zitoon.quoridor.core.logic;
 
 
-import com.harush.zitoon.quoridor.core.theirs.Position;
 import com.harush.zitoon.quoridor.core.model.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
-
-import static com.harush.zitoon.quoridor.core.theirs.Position.Orientation.*;
 
 public class PawnLogic implements Pawn {
 
     private static final Logger log = Logger.getLogger(PawnLogic.class.getSimpleName());
 
-    private int x;
-
-    private int y;
+    private Coordinate coordinate;
 
     public PawnLogic() {
-        x = -1;
-        y = -1;
+        coordinate = new Coordinate(-1, -1);
     }
 
     @Override
-    public LogicResult spawn(int x, int y, Board board) {
-        log.config(String.format("Spawning at coordinate: (%d, %d)", x, y));
+    public LogicResult spawn(Coordinate coordinate, Board board) {
+        log.config("Spawning at coordinate:" + coordinate);
 
-        LogicResult logicResult = board.setAtLocation(this, x, y);
+        LogicResult logicResult = board.setPawn(this, coordinate);
 
         if (!logicResult.isSuccess()) {
-            return createFailedLogicResult(String.format("Can't spawn at: (%d, %d)", x, y));
+            return createFailedLogicResult("Can't spawn at:" + coordinate);
         }
 
         return new LogicResult(true);
     }
 
     @Override
-    public LogicResult move(int x, int y, Board board) {
-        log.config(String.format("Moving to coordinate: (%d, %d)", x, y));
+    public LogicResult move(Coordinate coordinate, Board board) {
+        log.config("Moving to coordinate:" + coordinate);
 
-        if (isInvalidPawnMove(x, y)) {
-            return createFailedLogicResult(String.format("Moving to: (%d, %d) is an invalid pawn move", x, y));
+        if (!isSpawned()) {
+            return createFailedLogicResult("Pawn cannot move before spawning");
         }
 
-        LogicResult logicResult = board.setAtLocation(this, x, y);
+        if (board.isWithinBoard(coordinate)) {
+            return createFailedLogicResult(String.format("Moving to: %s is an invalid pawn move", coordinate));
+        }
+
+
+        board.setPawn(null, coordinate);
+
+        LogicResult logicResult = board.setPawn(this, coordinate);
         if (logicResult.isSuccess()) {
-            this.x = x;
-            this.y = y;
+            this.coordinate = new Coordinate(coordinate.getX(), coordinate.getY());
         }
 
         return logicResult;
+    }
+
+    @Override
+    public Coordinate getCoordinate() {
+        return coordinate;
+    }
+
+    private boolean isSpawned() {
+        return coordinate.getX() != -1 && coordinate.getY() != -1;
+    }
+
+    private List<Coordinate> getValidCoordinatesForMove(Board board) {
+        List<Coordinate> validCoordinatesForMove = new ArrayList<>();
+
+        validCoordinatesForMove.add(getValidCoordinateUp(board));
+        validCoordinatesForMove.add(getValidCoordinateLeft(board));
+
+
+    }
+
+    private Coordinate getValidCoordinateLeft(Board board) {
+
+
+    }
+
+    private Coordinate getValidCoordinateUp(Board board) {
+        if (board.isBoardBorderOccupied(coordinate)) {
+            return null;
+        }
+
+        Coordinate coordinateUp = new Coordinate(coordinate.getX(), coordinate.getY() - 1);
+
+        if (board.isWithinBoard(coordinateUp) && !board.isBoardBoxOccupied(coordinateUp)) {
+            return coordinateUp;
+        }
+
+        Coordinate coordinateJump = new Coordinate(coordinate.getX(), coordinate.getY() - 2);
+
+        if (board.isWithinBoard(coordinateJump) && !board.isBoardBoxOccupied(coordinateJump)) {
+            return coordinateJump;
+        }
+
+        return null;
     }
 
     private LogicResult createFailedLogicResult(String errMsg) {
         return new LogicResult(false, errMsg);
     }
 
-    @Override
-    public int getX() {
-        return x;
-    }
-
-    @Override
-    public int getY() {
-        return y;
-    }
-
-    @Override
-    public Position.Orientation getOrientation() {
-        return NONE;
-    }
-
-    @Override
-    public int getLength() {
-        return 0;
-    }
-
-    private boolean isInvalidPawnMove(int x, int y) {
-        return !isLeft(x, y) && !isUp(x, y) && !isRight(x, y) && !isDown(x, y);
-    }
-
-    private boolean isDown(int x, int y) {
-        return this.x == x && this.y - 1 == y;
-    }
-
-    private boolean isRight(int x, int y) {
-        return this.x + 1 == x && this.y == y;
-    }
-
-    private boolean isUp(int x, int y) {
-        return this.x == x && this.y + 1 == y;
-    }
-
-    private boolean isLeft(int x, int y) {
-        return this.x - 1 == x && this.y == y;
-    }
 }

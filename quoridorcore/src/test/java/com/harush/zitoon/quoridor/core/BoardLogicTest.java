@@ -27,12 +27,12 @@ public class BoardLogicTest {
     public void before() {
         MockitoAnnotations.initMocks(this);
         boardBoxLogics = new BoardBoxLogic[9][9];
-        boardLogic = new BoardLogic(boardBoxLogics);
+        boardLogic = new BoardLogic(boardBoxLogics, boardBorders);
     }
 
     @Test
     public void coordinateOutOfBoard_LogicResultFalse() {
-        LogicResult logicResult = boardLogic.setAtLocation(boardPiece, -1, -1);
+        LogicResult logicResult = boardLogic.setPawn(boardPiece, -1, -1);
 
         Assert.assertFalse(logicResult.isSuccess());
         Assert.assertEquals("Cannot set board piece at (-1,-1)", logicResult.getErrMsg());
@@ -41,9 +41,9 @@ public class BoardLogicTest {
     @Test
     public void coordinateOccupied_LogicResultFalse() {
         boardBoxLogics[1][1] = new BoardBoxLogic();
-        boardBoxLogics[1][1].setBoardPiece(new PawnLogic());
+        boardBoxLogics[1][1].setPawn(new PawnLogic());
 
-        LogicResult logicResult = boardLogic.setAtLocation(boardPiece, 1, 1);
+        LogicResult logicResult = boardLogic.setPawn(boardPiece, 1, 1);
 
         Assert.assertFalse(logicResult.isSuccess());
         Assert.assertEquals("Cannot set board piece at (1,1)", logicResult.getErrMsg());
@@ -58,11 +58,11 @@ public class BoardLogicTest {
         when(boardPiece.getX()).thenReturn(-1);
         when(boardPiece.getY()).thenReturn(-1);
 
-        LogicResult logicResult = boardLogic.setAtLocation(boardPiece, 1, 1);
+        LogicResult logicResult = boardLogic.setPawn(boardPiece, 1, 1);
 
         Assert.assertTrue(logicResult.isSuccess());
 
         Assert.assertTrue(boardBoxLogics[1][1].isOccupied());
-        Assert.assertEquals(boardPiece, boardBoxLogics[1][1].getBoardPiece());
+        Assert.assertEquals(boardPiece, boardBoxLogics[1][1].getPawn());
     }
 }
